@@ -1,0 +1,12 @@
+.hero-section {
+  background: linear-gradient(135deg, #f8f9fa, #e9fdfd);
+}
+
+.search-bar {
+  max-width: 850px;
+  margin: 0 auto;
+}
+
+.search-bar input:focus {
+  box-shadow: none;
+}
