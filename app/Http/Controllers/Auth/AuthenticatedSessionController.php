@@ -39,7 +39,6 @@ $user->load('role');
 
 // 🔥 Redirect based on role
 if ($user->role?->name === 'admin') {
-    return redirect('/homeAdmin');
 } elseif ($user->role?->name === 'user') {
     return redirect('properties');
 } else {

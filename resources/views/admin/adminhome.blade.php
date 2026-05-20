@@ -20,7 +20,7 @@
 
 	<div class="flex justify-between items-center mb-6">
 		<h2 class="text-2xl font-semibold text-gray-800">Your Properties</h2>
-		<a href="{{ route('properties.create') }}" class="bg-gradient-to-r from-teal-500 to-blue-600 text-white px-5 py-2 rounded-lg font-semibold shadow hover:from-teal-600 hover:to-blue-700 transition">Add New Property</a>
+		<a href="{{ route('admin.properties.create') }}" class="bg-gradient-to-r from-teal-500 to-blue-600 text-white px-5 py-2 rounded-lg font-semibold shadow hover:from-teal-600 hover:to-blue-700 transition">Add New Property</a>
 	</div>
 
 	@if($properties->isEmpty())
@@ -49,9 +49,9 @@
 							</td>
 							<td class="py-3 px-4">${{ number_format($property->price, 2) }}</td>
 							<td class="py-3 px-4 flex gap-2">
-								<a href="{{ route('properties.show', $property) }}" class="text-blue-600 hover:underline">View</a>
-								<a href="{{ route('properties.edit', $property) }}" class="text-yellow-600 hover:underline">Edit</a>
-								<form action="{{ route('properties.destroy', $property) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this property?');">
+								   <a href="{{ route('properties.show', $property) }}" class="text-blue-600 hover:underline">View</a>
+								   <a href="{{ route('admin.properties.edit', $property) }}" class="text-yellow-600 hover:underline">Edit</a>
+								   <form action="{{ route('admin.properties.destroy', $property) }}" method="POST" onsubmit="return confirm('Are you sure you want to delete this property?');">
 									@csrf
 									@method('DELETE')
 									<button type="submit" class="text-red-600 hover:underline">Delete</button>

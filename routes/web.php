@@ -1,37 +1,90 @@
 <?php
 
+use Illuminate\Support\Facades\Route;
+
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\PropertyController;
+use App\Http\Controllers\Admin\AdminPropertyController;
+use App\Http\Controllers\Admin\AdminController;
 use App\Http\Controllers\SuperAdminController;
-use App\Http\Controllers\AdminController;
-use Illuminate\Support\Facades\Route;
+
+/*
+|--------------------------------------------------------------------------
+| Public Landing Page
+|--------------------------------------------------------------------------
+*/
 
 Route::get('/', function () {
     return view('welcome');
 });
 
+/*
+|--------------------------------------------------------------------------
+| Dashboard
+|--------------------------------------------------------------------------
+*/
+
 Route::get('/dashboard', function () {
     return view('dashboard');
 })->middleware(['auth', 'verified'])->name('dashboard');
 
+/*
+|--------------------------------------------------------------------------
+| Public Property Viewing (Users)
+|--------------------------------------------------------------------------
+*/
 
-// Users can only view properties
-Route::middleware(['auth', 'role:user'])->resource('properties', PropertyController::class)->only(['index', 'show']);
+Route::middleware(['auth', 'role:user'])->group(function () {
 
-// Admins and superadmins can manage properties
-Route::middleware(['auth', 'role:admin'])->resource('properties', PropertyController::class)->except(['index', 'show']);
-// If you want superadmin to also access, add a similar route or adjust middleware accordingly
-
-Route::middleware('auth')->group(function () {
-    Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
-    Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
-    Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
+    Route::resource('properties', PropertyController::class)
+        ->only(['index', 'show']);
 });
 
-    Route::middleware(['auth', 'superadmin'])->get('/homeSuperAdmin', [SuperAdminController::class, 'homeSuperAdmin']);
+/*
+|--------------------------------------------------------------------------
+| Admin Property Management
+|--------------------------------------------------------------------------
+*/
 
-    Route::middleware(['auth', 'role:admin'])->group(function () {
-    Route::get('homeAdmin', [AdminController::class,'homeAdmin']);
+Route::prefix('admin')
+    ->name('admin.')
+    ->middleware(['auth', 'role:admin'])
+    ->group(function () {
+
+        Route::resource('properties', AdminPropertyController::class);
     });
 
-require __DIR__.'/auth.php';
+    Route::middleware(['auth', 'role:admin'])->group(function () {
+        Route::get('/homeAdmin', [AdminController::class, 'homeAdmin'])->name('homeAdmin');
+    });
+/*
+|--------------------------------------------------------------------------
+| Super Admin
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware(['auth', 'superadmin'])->group(function () {
+
+    Route::get('/homeSuperAdmin', [SuperAdminController::class, 'homeSuperAdmin'])
+        ->name('superadmin.dashboard');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Profile Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::middleware('auth')->group(function () {
+
+    Route::get('/profile', [ProfileController::class, 'edit'])
+        ->name('profile.edit');
+
+    Route::patch('/profile', [ProfileController::class, 'update'])
+        ->name('profile.update');
+
+    Route::delete('/profile', [ProfileController::class, 'destroy'])
+        ->name('profile.destroy');
+});
+
+require __DIR__ . '/auth.php';
